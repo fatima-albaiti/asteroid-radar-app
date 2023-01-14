@@ -4,21 +4,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.ApiConstant
-import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.api.NetworkAsteroid
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainViewModel : ViewModel() {
-    private val _asteroids = MutableLiveData<ArrayList<Asteroid>>()
-    val asteroids: LiveData<ArrayList<Asteroid>> get() = _asteroids
+    private val _asteroids = MutableLiveData<ArrayList<NetworkAsteroid>>()
+    val asteroids: LiveData<ArrayList<NetworkAsteroid>> get() = _asteroids
 
     init {
         val days = getNextSevenDaysFormattedDates()
