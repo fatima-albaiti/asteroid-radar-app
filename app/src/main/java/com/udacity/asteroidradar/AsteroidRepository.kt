@@ -3,7 +3,6 @@ package com.udacity.asteroidradar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.api.NasaApi
-import com.udacity.asteroidradar.api.NetworkAsteroid
 import com.udacity.asteroidradar.api.asDatabaseModel
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidsDatabase
