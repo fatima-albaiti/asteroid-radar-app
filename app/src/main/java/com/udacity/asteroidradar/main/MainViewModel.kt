@@ -18,10 +18,13 @@ class MainViewModel(application: Application) : ViewModel() {
         val days = getNextSevenDaysFormattedDates()
         viewModelScope.launch {
             repository.listAsteroids(days[0], days.last(), ApiConstant.API_KEY)
+            repository.getPictureOfDay(ApiConstant.API_KEY)
         }
     }
 
     val asteroids = repository.asteroids
+
+    val picture = repository.pictureOfDay
 
     class Factory(val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

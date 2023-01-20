@@ -19,9 +19,6 @@ class MainFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-//        viewModel.asteroids.observe(viewLifecycleOwner) {
-//            demo_text?.text = it.toString()
-//        }
         binding.asteroidRecycler.adapter = AsteroidAdapter()
         setHasOptionsMenu(true)
 

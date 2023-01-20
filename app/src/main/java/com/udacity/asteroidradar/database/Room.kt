@@ -11,9 +11,15 @@ interface AsteroidDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg asteroids: DatabaseAsteroid)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPicture(picture: DatabasePicture)
+
+    @Query("select * from databasepicture order by date desc limit 1")
+    fun getPictureOfDay(): LiveData<DatabasePicture>
 }
 
-@Database(entities = [DatabaseAsteroid::class], version = 1)
+@Database(entities = [DatabaseAsteroid::class, DatabasePicture::class], version = 2)
 abstract class AsteroidsDatabase: RoomDatabase() {
     abstract val asteroidDao: AsteroidDao
 }
@@ -27,7 +33,9 @@ fun getDatabase(context: Context): AsteroidsDatabase {
                 context.applicationContext,
                 AsteroidsDatabase::class.java,
                 "asteroids"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
         return INSTANCE
     }
