@@ -7,13 +7,17 @@
         <variable
             name="asteroidItem"
             type="com.udacity.asteroidradar.Asteroid" />
+        <variable
+            name="clickListener"
+            type="com.udacity.asteroidradar.main.AsteroidAdapter.AsteroidClickListener" />
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="@android:color/black">
+        android:background="@android:color/black"
+        android:onClick="@{()->clickListener.onClick(asteroidItem)}">
 
         <LinearLayout
             android:layout_width="wrap_content"
