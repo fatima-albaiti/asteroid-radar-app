@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.asDatabaseModel
+import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.database.asDomainModel
@@ -14,16 +15,20 @@ import org.json.JSONObject
 import retrofit2.await
 
 class AsteroidRepository(private val database: AsteroidsDatabase) {
-    val asteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidDao.getAsteroids()) {
-        it.asDomainModel()
-    }
-
-//    suspend fun getPictureOfDay(apiKey: String){
-//        //val pictureOfDay: LiveData<PictureOfDay> = NasaApi.retrofitService.getPictureOfTheDay(apiKey).await()
-//    }
+    private val days = getNextSevenDaysFormattedDates()
 
     val pictureOfDay: LiveData<PictureOfDay> = Transformations.map( database.asteroidDao.getPictureOfDay()) {
         it.asDomainModel()
+    }
+
+    fun getAsteroids(filter: String): LiveData<List<Asteroid>> {
+        return Transformations.map(when(filter){
+            AsteroidFilter.SAVED -> database.asteroidDao.getAllAsteroids()
+            AsteroidFilter.TODAY -> database.asteroidDao.getTodayAsteroids(days[0])
+            else -> database.asteroidDao.getWeekAsteroids(days[0], days.last())
+        }) {
+            it.asDomainModel()
+        }
     }
 
     suspend fun getPictureOfDay(apiKey: String){
@@ -39,10 +44,10 @@ class AsteroidRepository(private val database: AsteroidsDatabase) {
         }
     }
 
-    suspend fun listAsteroids(startDate: String, endDate: String, apiKey: String) {
+    suspend fun updateAsteroids() {
         withContext(Dispatchers.IO) {
             try {
-                val asteroidsString = NasaApi.retrofitService.getAsteroids(startDate, endDate, apiKey).await()
+                val asteroidsString = NasaApi.retrofitService.getAsteroids(days[0], days.last(), ApiConstant.API_KEY).await()
                 val asteroids = parseAsteroidsJsonResult(JSONObject(asteroidsString))
                 database.asteroidDao.insertAll(*asteroids.asDatabaseModel())
             } catch (e: java.lang.Exception){
